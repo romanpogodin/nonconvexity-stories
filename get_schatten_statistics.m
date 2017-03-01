@@ -36,7 +36,7 @@ for i = 0:num_trials - 1
         disp(ME.message);
     end
     
-    if ~mod(i + 1, buff_size)
+    if ~mod(i + 1, buff_size) || i == num_trials -1
         dlmwrite(filename, data, 'delimiter', ',', '-append');
     end
 end

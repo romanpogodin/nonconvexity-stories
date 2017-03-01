@@ -54,5 +54,5 @@ for n = 1:num_iter
 end
     
 [cut, new_cut_optval] = compute_cut_randomized(laplacian_matrix, curr_x, ...
-    num_cut_finder_trials);
+num_cut_finder_trials);
 end

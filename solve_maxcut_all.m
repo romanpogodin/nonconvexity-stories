@@ -1,5 +1,10 @@
-function solve_maxcut_all(laplacian_matrix, methods, p, eps, num_iter, ...
-    precision, num_cut_finder_trials, is_quiet, is_cvx_quiet)
+function return_values_map = solve_maxcut_all(laplacian_matrix, methods, ...
+    p, eps, num_iter, precision, num_cut_finder_trials, ...
+    is_quiet, is_cvx_quiet, rank_tolerance)
+if nargin < 10
+    rank_tolerance = 1e-4;
+end
+
 if nargin < 9
     is_cvx_quiet = true;
 end
@@ -34,6 +39,10 @@ end
 [sdp_matrix, cut, sdp_optval, cut_optval] = ...
     solve_maxcut_sdp(laplacian_matrix, num_cut_finder_trials, is_cvx_quiet);
 
+return_values_map = containers.Map(...
+    {'sdp_optval', 'sdp_cut_optval', 'sdp_rank'}, ...
+    [sdp_optval, cut_optval, rank(full(sdp_matrix), rank_tolerance)]);
+
 if ismember('schatten', methods)
     if ~is_quiet
         disp('Solving Schatten...')
@@ -41,6 +50,11 @@ if ismember('schatten', methods)
     [schatten_cut, schatten_cut_optval, schatten_matrix] = ...
         solve_maxcut_irls(laplacian_matrix, sdp_optval, cut_optval, sdp_matrix, p, ...
         eps, num_iter, precision, num_cut_finder_trials, is_cvx_quiet);
+    
+    return_values_map = [return_values_map; containers.Map(...
+        {'schatten_optval', 'schatten_cut_optval', 'schatten_rank'}, ...
+        [(0.25 * trace(laplacian_matrix * schatten_matrix)), ...
+        schatten_cut_optval, rank(full(schatten_matrix), rank_tolerance)])];
 end
 
 if ismember('grad', methods)
@@ -50,6 +64,11 @@ if ismember('grad', methods)
     [grad_cut, grad_cut_optval, grad_matrix] = ...
         solve_maxcut_grad(laplacian_matrix, sdp_optval, cut_optval, sdp_matrix, p, ...
         eps, num_iter, precision, num_cut_finder_trials, is_cvx_quiet);
+    
+    return_values_map = [return_values_map; containers.Map(...
+        {'grad_optval', 'grad_cut_optval', 'grad_rank'}, ...
+        [(0.25 * trace(laplacian_matrix * grad_matrix)), ...
+        grad_cut_optval, rank(full(grad_matrix), rank_tolerance)])];
 end
 
 
@@ -72,5 +91,4 @@ if ~is_quiet
     % 0.25 * trace(laplacian_matrix * schatten_matrix)
     % 0.25 * t
 end
-
 end

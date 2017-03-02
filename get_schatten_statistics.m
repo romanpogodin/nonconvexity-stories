@@ -31,6 +31,7 @@ for i = 0:num_trials - 1
             fid = fopen(filename, 'w');
             fprintf(fid, strcat(strjoin(return_values_map.keys, ','), '\n'));
             fclose(fid);
+            disp('File created');
         end
     catch ME
         disp(ME.message);
@@ -38,6 +39,7 @@ for i = 0:num_trials - 1
     
     if ~mod(i + 1, buff_size) || i == num_trials -1
         dlmwrite(filename, data, 'delimiter', ',', '-append');
+        disp('Data slice recorded');
     end
 end
 end

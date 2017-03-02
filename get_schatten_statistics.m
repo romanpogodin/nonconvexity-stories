@@ -29,7 +29,7 @@ for i = 0:num_trials - 1
         
         if ~exist(filename, 'file')   
             fid = fopen(filename, 'w');
-            fprintf(fid, strcat(strjoin(return_values_map.keys, ', '), '\n'));
+            fprintf(fid, strcat(strjoin(return_values_map.keys, ','), '\n'));
             fclose(fid);
         end
     catch ME

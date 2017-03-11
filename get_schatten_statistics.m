@@ -1,5 +1,9 @@
 function get_schatten_statistics(prob, graph_size, num_trials, ...
-    filename, buff_size)
+    filename, buff_size, methods)
+
+if nargin < 6
+    methods = {'schatten'};
+end
 
 if nargin < 5
     buff_size = 100;
@@ -12,10 +16,9 @@ p = 0.05;
 eps = 0.1;
 num_iter = 10;
 precision = 0.001;
-methods = {'schatten'};
 rank_tolerance = 1e-3;
 
-data = zeros(min(num_trials, buff_size), 6);
+data = zeros(min(num_trials, buff_size), 3 * length(methods));
 
 for i = 0:num_trials - 1
     try
@@ -25,7 +28,9 @@ for i = 0:num_trials - 1
             p, eps, num_iter, precision, num_cut_finder_trials, ...
             is_quiet, is_cvx_quiet, rank_tolerance);
 
-        data(1 + mod(i, buff_size), :) = cell2mat(return_values_map.values);
+        data(1 + mod(i, buff_size), ...
+            1:length(return_values_map.values)) = ...
+            cell2mat(return_values_map.values);
         
         if ~exist(filename, 'file')   
             fid = fopen(filename, 'w');

@@ -48,8 +48,8 @@ if ismember('schatten', methods)
         disp('Solving Schatten...')
     end
     [schatten_cut, schatten_cut_optval, schatten_matrix] = ...
-        solve_maxcut_irls(laplacian_matrix, sdp_optval, cut_optval, sdp_matrix, p, ...
-        eps, num_iter, precision, num_cut_finder_trials, is_cvx_quiet);
+        solve_maxcut_irls(laplacian_matrix, sdp_optval, cut_optval, sdp_matrix, ...
+        p, eps, num_iter, precision, num_cut_finder_trials, is_cvx_quiet);
     
     return_values_map = [return_values_map; containers.Map(...
         {'schatten_optval', 'schatten_cut_optval', 'schatten_rank'}, ...
@@ -71,6 +71,17 @@ if ismember('grad', methods)
         grad_cut_optval, rank(full(grad_matrix), rank_tolerance)])];
 end
 
+if ismember('greedy', methods)
+    if ~is_quiet
+        disp('Solving greedy...')
+    end
+    [greedy_cut, greedy_cut_optval] = ...
+        solve_maxcut_greedy(laplacian_matrix, cut);
+   
+    return_values_map = [return_values_map; containers.Map(...
+        {'greedy_cut_optval'}, greedy_cut_optval)];
+end
+
 
 if ~is_quiet
     disp('SDP cut optval:')
@@ -85,6 +96,12 @@ if ~is_quiet
         disp('Grad optval:')
         disp(grad_cut_optval)
     end
+    
+    if ismember('greedy', methods)
+        disp('Greedy optval:')
+        disp(greedy_cut_optval)
+    end
+    
     % transpose(svd(sdp_matrix))
     % transpose(svd(schatten_matrix))
     % svd(grad_matrix)

@@ -1,6 +1,9 @@
 function get_schatten_statistics(prob, graph_size, num_trials, ...
-    filename, buff_size, methods)
+    filename, buff_size, methods, is_rankone_start)
 
+if nargin < 7
+   is_rankone_start = false; 
+end
 if nargin < 6
     methods = {'schatten'};
 end
@@ -26,7 +29,7 @@ for i = 0:num_trials - 1
 
         return_values_map = solve_maxcut_all(laplacian_matrix, methods, ...
             p, eps, num_iter, precision, num_cut_finder_trials, ...
-            is_quiet, is_cvx_quiet, rank_tolerance);
+            is_quiet, is_cvx_quiet, rank_tolerance, is_rankone_start);
 
         data(1 + mod(i, buff_size), ...
             1:length(return_values_map.values)) = ...

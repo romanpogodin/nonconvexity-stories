@@ -1,6 +1,9 @@
 function return_values_map = solve_maxcut_all(laplacian_matrix, methods, ...
     p, eps, num_iter, precision, num_cut_finder_trials, ...
-    is_quiet, is_cvx_quiet, rank_tolerance)
+    is_quiet, is_cvx_quiet, rank_tolerance, is_rankone_start)
+if nargin < 11
+   is_rankone_start = false; 
+end
 if nargin < 10
     rank_tolerance = 1e-4;
 end
@@ -47,8 +50,15 @@ if ismember('schatten', methods)
     if ~is_quiet
         disp('Solving Schatten...')
     end
+    
+    if is_rankone_start
+       x_start = cut * transpose(cut); 
+    else
+       x_start = sdp_matrix;
+    end
+    
     [schatten_cut, schatten_cut_optval, schatten_matrix] = ...
-        solve_maxcut_irls(laplacian_matrix, sdp_optval, cut_optval, sdp_matrix, ...
+        solve_maxcut_irls(laplacian_matrix, sdp_optval, cut_optval, x_start, ...
         p, eps, num_iter, precision, num_cut_finder_trials, is_cvx_quiet);
     
     return_values_map = [return_values_map; containers.Map(...
@@ -61,8 +71,15 @@ if ismember('grad', methods)
     if ~is_quiet
         disp('Solving grad...')
     end
+    
+    if is_rankone_start
+       x_start = cut * transpose(cut); 
+    else
+       x_start = sdp_matrix;
+    end
+    
     [grad_cut, grad_cut_optval, grad_matrix] = ...
-        solve_maxcut_grad(laplacian_matrix, sdp_optval, cut_optval, sdp_matrix, p, ...
+        solve_maxcut_grad(laplacian_matrix, sdp_optval, cut_optval, x_start, p, ...
         eps, num_iter, precision, num_cut_finder_trials, is_cvx_quiet);
     
     return_values_map = [return_values_map; containers.Map(...

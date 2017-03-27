@@ -88,6 +88,27 @@ if ismember('grad', methods)
         grad_cut_optval, rank(full(grad_matrix), rank_tolerance)])];
 end
 
+if ismember('langevin', methods)
+    if ~is_quiet
+        disp('Solving langevin...')
+    end
+    
+    if is_rankone_start
+       x_start = cut * transpose(cut); 
+    else
+       x_start = sdp_matrix;
+    end
+    
+    [langevin_cut, langevin_cut_optval, langevin_matrix] = ...
+        solve_maxcut_langevin(laplacian_matrix, sdp_optval, cut_optval, x_start, p, ...
+        eps, num_iter, precision, num_cut_finder_trials, is_cvx_quiet);
+    
+    return_values_map = [return_values_map; containers.Map(...
+        {'langevin_optval', 'langevin_cut_optval', 'langevin_rank'}, ...
+        [(0.25 * trace(laplacian_matrix * langevin_matrix)), ...
+        langevin_cut_optval, rank(full(langevin_matrix), rank_tolerance)])];
+end
+
 if ismember('greedy', methods)
     if ~is_quiet
         disp('Solving greedy...')

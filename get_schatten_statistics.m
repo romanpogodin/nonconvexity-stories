@@ -5,7 +5,7 @@ if nargin < 6
    is_rankone_start = false; 
 end
 if nargin < 5
-    methods = {'schatten'};
+    methods = {'langevin'};
 end
 
 num_cut_finder_trials = 10;

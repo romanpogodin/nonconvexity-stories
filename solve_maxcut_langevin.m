@@ -28,14 +28,13 @@ end
 curr_x = x_start;
 best_x = x_start;
 
-eta = 0.1
-ksi = 1
+eta = 0.1;
+ksi = 1;
 
 for n = 1:num_iter
-    %w = rand(size(curr_x)) - ones(size(curr_x))
-    P = poissrnd(2)
-    w = randn(size(curr_x))
-    curr_x = curr_x - eta * compute_schatten_grad(curr_x, p, eps)+sqrt(2*eta/ksi)*w*P;
+    w = randn(size(curr_x));
+    curr_x = curr_x - eta * compute_schatten_grad(curr_x, p, eps) + ...
+        sqrt(2 * eta / ksi) * w;
     
     if is_cvx_quiet
         cvx_begin sdp quiet
@@ -56,12 +55,12 @@ for n = 1:num_iter
     end
     
     if (norm_schatten(Y) < norm_schatten(best_x))
-        best_x = Y
+        best_x = Y;
     end
     
     curr_x = Y;
 end
-curr_x = best_x
+curr_x = best_x;
     
 [cut, new_cut_optval] = compute_cut_randomized(laplacian_matrix, curr_x, ...
     num_cut_finder_trials);

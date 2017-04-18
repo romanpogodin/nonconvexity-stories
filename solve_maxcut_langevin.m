@@ -28,40 +28,41 @@ end
 curr_x = x_start;
 best_x = x_start;
 
-eta = 0.1
-ksi = 1
+eta = 0.1;
+ksi = 100;
 
 for n = 1:num_iter
-    %w = rand(size(curr_x)) - ones(size(curr_x))
-    P = poissrnd(2)
-    w = randn(size(curr_x))
-    curr_x = curr_x - eta * compute_schatten_grad(curr_x, p, eps)+sqrt(2*eta/ksi)*w*P;
     
-    if is_cvx_quiet
-        cvx_begin sdp quiet
-    else
-        cvx_begin sdp
+    Grad = 2*p * mpower(transpose(curr_x) * curr_x + ...
+        eps * eye(size(curr_x, 1)), (p - 2.0) / 2.0) * curr_x
+    w = randn(size(curr_x))
+    
+    for i=1:size(curr_x, 1)
+        for j=i:size(curr_x, 1)
+            if (i == j)
+                Grad(i, j) = 0
+                w(i, j) = 0
+            else
+                Grad(j, i) = Grad(i, j)
+                w(j, i) = w(i, j)
+            end
+        end
     end
-        
-    variable Y(size(curr_x)) symmetric
-        minimize norm(Y - curr_x, 1)
-        subject to
-            Y >= 0
-            diag(Y) == 1
-            4 * cut_optval <= trace(laplacian_matrix * Y) <= 4 * sdp_optval
-    cvx_end
-
+    
+    Y = curr_x - eta*Grad + sqrt(2*eta/ksi)*w
+    
+    
     if norm_schatten(Y - curr_x, p, eps) < precision
         break
     end
     
     if (norm_schatten(Y) < norm_schatten(best_x))
-        best_x = Y
+        best_x = Y;
     end
     
     curr_x = Y;
 end
-curr_x = best_x
+curr_x = best_x;
     
 [cut, new_cut_optval] = compute_cut_randomized(laplacian_matrix, curr_x, ...
     num_cut_finder_trials);

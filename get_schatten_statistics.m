@@ -19,6 +19,13 @@ rank_tolerance = 1e-3;
 
 if ~exist(filename, 'file')   
     fid = fopen(filename, 'w');
+    
+    return_values_map = solve_maxcut_all(get_laplacian('triangle'), methods, ...
+        p, eps, 1, 0.1, 1, true, true);
+    keys = return_values_map.keys;
+    fprintf(fid, '%s,', keys{1:end-1});
+    fprintf(fid, '%s\n', keys{end});
+    
     fclose(fid);
     disp(strcat('File "', filename, '" created'));
 end
@@ -72,5 +79,5 @@ else
         end
     end
 end
-    
+
 end

@@ -109,6 +109,28 @@ if ismember('langevin', methods)
         langevin_cut_optval, rank(full(langevin_matrix), rank_tolerance)])];
 end
 
+if ismember('langevin_vector', methods)
+    if ~is_quiet
+        disp('Solving vectorized langevin...')
+    end
+    
+    if is_rankone_start
+       x_start = cut * transpose(cut); 
+    else
+       x_start = sdp_matrix;
+    end
+    
+    [langevin_cut, langevin_cut_optval, langevin_matrix] = ...
+        solve_maxcut_sgld_vector(laplacian_matrix, sdp_optval, ...
+        cut_optval, x_start, p, eps, num_iter, precision, ...
+        num_cut_finder_trials);
+    
+    return_values_map = [return_values_map; containers.Map(...
+        {'slgd_vec_optval', 'slgd_vec_cut_optval', 'slgd_vec_rank'}, ...
+        [(0.25 * trace(laplacian_matrix * langevin_matrix)), ...
+        langevin_cut_optval, rank(full(langevin_matrix), rank_tolerance)])];
+end
+
 if ismember('greedy', methods)
     if ~is_quiet
         disp('Solving greedy...')

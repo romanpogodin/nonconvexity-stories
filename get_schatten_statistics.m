@@ -1,11 +1,14 @@
 function get_schatten_statistics(prob, graph_size, num_trials, ...
-    filename, methods, is_rankone_start)
+    filename, methods, is_rankone_start, num_iter)
 
+if nargin < 7
+    num_iter = 10;
+end
 if nargin < 6
-   is_rankone_start = false; 
+    is_rankone_start = false; 
 end
 if nargin < 5
-    methods = {'langevin'};
+    methods = {'langevin_vector'};
 end
 
 num_cut_finder_trials = 10;
@@ -13,16 +16,17 @@ is_quiet = true;
 is_cvx_quiet = true;
 p = 0.05;
 eps = 0.1;
-num_iter = 10;
 precision = 0.001;
 rank_tolerance = 1e-3;
 
 if ~exist(filename, 'file')   
+    disp(filename);
     fid = fopen(filename, 'w');
-    
+
     return_values_map = solve_maxcut_all(get_laplacian('triangle'), methods, ...
         p, eps, 1, 0.1, 1, true, true);
     keys = return_values_map.keys;
+
     fprintf(fid, '%s,', keys{1:end-1});
     fprintf(fid, '%s\n', keys{end});
     

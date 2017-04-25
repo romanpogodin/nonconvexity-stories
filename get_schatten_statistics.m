@@ -11,7 +11,7 @@ if nargin < 5
     methods = {'langevin_vector'};
 end
 
-num_cut_finder_trials = 10;
+num_cut_finder_trials = 100;
 is_quiet = true;
 is_cvx_quiet = true;
 p = 0.05;

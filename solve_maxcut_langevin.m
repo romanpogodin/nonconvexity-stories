@@ -27,31 +27,31 @@ end
 
 curr_x = x_start;
 best_x = x_start;
+best_optval_x = x_start;
+best_rank_x = x_start;
 
 eta = 0.1;
-ksi = 100;
+ksi = 10;
 
 for n = 1:num_iter
+    w = randn(size(curr_x));
+    curr_x = curr_x - eta * compute_schatten_grad(curr_x, p, eps) + ...
+        sqrt(2 * eta / ksi) * w;
     
-    Grad = 2*p * mpower(transpose(curr_x) * curr_x + ...
-        eps * eye(size(curr_x, 1)), (p - 2.0) / 2.0) * curr_x
-    w = randn(size(curr_x))
-    
-    for i=1:size(curr_x, 1)
-        for j=i:size(curr_x, 1)
-            if (i == j)
-                Grad(i, j) = 0
-                w(i, j) = 0
-            else
-                Grad(j, i) = Grad(i, j)
-                w(j, i) = w(i, j)
-            end
-        end
+    if is_cvx_quiet
+        cvx_begin sdp quiet
+    else
+        cvx_begin sdp
     end
-    
-    Y = curr_x - eta*Grad + sqrt(2*eta/ksi)*w
-    
-    
+        
+    variable Y(size(curr_x)) symmetric
+        minimize norm(Y - curr_x, 1)
+        subject to
+            Y >= 0
+            diag(Y) == 1
+            4 * cut_optval <= trace(laplacian_matrix * Y) <= 4 * sdp_optval
+    cvx_end
+
     if norm_schatten(Y - curr_x, p, eps) < precision
         break
     end
@@ -60,10 +60,35 @@ for n = 1:num_iter
         best_x = Y;
     end
     
+    if (trace(laplacian_matrix * Y) > trace(laplacian_matrix * best_optval_x))
+        best_optval_x = Y;
+    end
+    
+    if (rank(Y) < rank(best_rank_x))
+        best_rank_x = Y;
+    end
+    
     curr_x = Y;
 end
 curr_x = best_x;
     
 [cut, new_cut_optval] = compute_cut_randomized(laplacian_matrix, curr_x, ...
     num_cut_finder_trials);
+[cut_best_optval, new_cut_optval_best_optval] = ...
+    compute_cut_randomized(laplacian_matrix, best_optval_x, ...
+    num_cut_finder_trials);
+[cut_best_rank, new_cut_optval_best_rank] = ...
+    compute_cut_randomized(laplacian_matrix, best_rank_x, ...
+    num_cut_finder_trials);
+
+if (new_cut_optval_best_optval > new_cut_optval)
+    cut = cut_best_optval;
+    new_cut_optval = new_cut_optval_best_optval;
+end
+
+if (new_cut_optval_best_rank > new_cut_optval)
+    cut = cut_best_rank;
+    new_cut_optval = new_cut_optval_best_rank;
+end
+
 end

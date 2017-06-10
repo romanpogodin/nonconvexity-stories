@@ -3,13 +3,14 @@
 
 sizes = [50, 100];
 probabilities = [0.3, 0.5, 0.8];
-p_norm = [0.1, 0.5, 0.8];
-q_param = [0.5, 0.8];
+p_norm = 0.5;
+q_param = 0.8;
 eps = 0.001;
-num_trials = 100;
-num_iter = 100;
-precision = 1e-8;
-write_precision = 8;
+num_trials = 50;
+num_iter = 10;
+num_iter_long = 100;
+precision = 1e-6;
+write_precision = 6;
 folder = 'convergence_results/';
 
 mkdir(folder);
@@ -27,16 +28,16 @@ for size = sizes
             [sdp_matrix, cut, sdp_optval, cut_optval] = ...
                 solve_maxcut_sdp(laplacian_matrix, 10, true);
             
-            %% IRLS
-            for p = p_norm
-               [~, optvals] = solve_maxcut_irls(...
-                   laplacian_matrix, sdp_optval, cut_optval, ...
-                   sdp_matrix, p, eps, num_iter, precision, true, true) 
-
-               dlmwrite(strcat(folder, 'irls_', general_name, ...
-                   '_p', int2str(10 * p)), transpose(optvals), ...
-                   '-append','precision', write_precision); 
-            end
+%             %% IRLS
+%             for p = p_norm
+%                [~, optvals] = solve_maxcut_irls(...
+%                    laplacian_matrix, sdp_optval, cut_optval, ...
+%                    sdp_matrix, p, eps, num_iter_long, precision, true, true) 
+% 
+%                dlmwrite(strcat(folder, 'irls_', general_name, ...
+%                    '_p', int2str(10 * p)), transpose(optvals), ...
+%                    '-append','precision', write_precision); 
+%             end
 
             %% Schatten grad
             for p = p_norm
@@ -63,7 +64,7 @@ for size = sizes
             %% Log-det
             [~, optvals] = solve_maxcut_logdet(...
                 laplacian_matrix, sdp_optval, cut_optval, ...
-                sdp_matrix, eps, num_iter, precision, true, true)
+                sdp_matrix, eps, num_iter_long, precision, true, true)
 
             dlmwrite(strcat(folder, 'logdet_', general_name), ...
                 transpose(optvals), '-append','precision', write_precision);

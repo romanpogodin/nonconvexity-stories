@@ -1,13 +1,13 @@
 % Saves results for mean convergence of proposed algorithms
 % Tries different parameters and size. Requires Parallel Computing Toolbox
 
-sizes = [10];
-probabilities = [0.5];
-p_norm = [0.5];
-q_param = [0.8];
+sizes = [50, 100];
+probabilities = [0.3, 0.5, 0.8];
+p_norm = [0.1, 0.5, 0.8];
+q_param = [0.5, 0.8];
 eps = 0.001;
-num_trials = 2;
-num_iter = 2;
+num_trials = 100;
+num_iter = 100;
 precision = 1e-8;
 write_precision = 8;
 folder = 'convergence_results/';

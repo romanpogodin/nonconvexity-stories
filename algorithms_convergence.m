@@ -16,6 +16,8 @@ mkdir(folder);
 
 for size = sizes
     for prob = probabilities
+        disp(strcat('Running for size=', int2str(size), ...
+            ' and prob=', int2str(100 * prob)));
         general_name = strcat('s', int2str(size), '_pr', ...
             int2str(100 * prob));
         parfor i = 1:num_trials           

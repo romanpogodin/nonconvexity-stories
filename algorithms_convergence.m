@@ -1,14 +1,14 @@
 % Saves results for mean convergence of proposed algorithms
 % Tries different parameters and size. Requires Parallel Computing Toolbox
 
-sizes = [50, 100];
+sizes = [20];
 probabilities = [0.3, 0.5, 0.8];
 p_norm = 0.5;
 q_param = 0.8;
 eps = 0.001;
-num_trials = 50;
-num_iter = 10;
-num_iter_long = 100;
+num_trials = 5;
+num_iter = 1;
+num_iter_long = 1;
 precision = 1e-6;
 write_precision = 6;
 folder = 'convergence_results/';
@@ -68,6 +68,8 @@ for size = sizes
 
             dlmwrite(strcat(folder, 'logdet_', general_name), ...
                 transpose(optvals), '-append','precision', write_precision);
+            
+            disp('Trial done');
         end
     end
 end

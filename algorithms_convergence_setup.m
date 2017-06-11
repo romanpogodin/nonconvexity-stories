@@ -6,7 +6,7 @@ num_trials = 50;
 num_iter = 100;
 precision = 1e-6;
 write_precision = 6;
-size = 50;
+graph_size = 50;
 prob = 0.5;
 
 folder = 'convergence_results/';

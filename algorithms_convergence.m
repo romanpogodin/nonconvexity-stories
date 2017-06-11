@@ -2,9 +2,9 @@
 % Tries different parameters and size. Requires Parallel Computing Toolbox
 
 %% Preliminaries
-disp(strcat('Running for size=', int2str(size), ...
+disp(strcat('Running for size=', int2str(graph_size), ...
     ' and prob=', int2str(100 * prob)));
-general_name = strcat('s', int2str(size), '_pr', ...
+general_name = strcat('s', int2str(graph_size), '_pr', ...
     int2str(100 * prob));
 
 % methods are hard-coded below due to parfor restrictions
@@ -27,7 +27,7 @@ end
 %% Parallel simulations
 parfor i = 1:num_trials 
     %% Run the same matrix for each method
-    laplacian_matrix = get_laplacian('random', prob, size);
+    laplacian_matrix = get_laplacian('random', prob, graph_size);
 
     [sdp_matrix, cut, sdp_optval, cut_optval] = ...
         solve_maxcut_sdp(laplacian_matrix, 10, true);
@@ -36,21 +36,21 @@ parfor i = 1:num_trials
     if do_irls
         [~, results_irls(i, :)] = solve_maxcut_irls(...
             laplacian_matrix, sdp_optval, cut_optval, ...
-            sdp_matrix, p, eps, num_iter, precision, true, true) 
+            sdp_matrix, p, eps, num_iter, precision, true, true); 
     end
     
     %% Schatten grad
     if do_grad
         [~, results_grad(i, :)] = solve_maxcut_grad(...
             laplacian_matrix, sdp_optval, cut_optval, ...
-            sdp_matrix, p, eps, num_iter, precision, true, true)
+            sdp_matrix, p, eps, num_iter, precision, true, true);
     end
         
     %% Singular values grad
     if do_singval
         [~, results_singval(i, :)] = solve_maxcut_singval(...
             laplacian_matrix, sdp_optval, cut_optval, ...
-            sdp_matrix, q, eps, num_iter, precision, true, true)
+            sdp_matrix, q, eps, num_iter, precision, true, true);
     end
         
     %% Log-det

@@ -20,6 +20,7 @@ do_logdet = true;
 
 %% Run scripts
 
+disp('Running p=0.5 and q=0.8');
 p = 0.5;
 q = 0.8;
 
@@ -27,6 +28,7 @@ algorithms_convergence
 
 do_logdet = false;
 
+disp('Running p=0.1 and q=0.5 (no logdet');
 p = 0.1;
 q = 0.5;
 

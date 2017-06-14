@@ -44,7 +44,7 @@ end
 
 return_values_map = containers.Map(...
     {'sdp_optval', 'sdp_cut_optval', 'sdp_rank'}, ...
-    [sdp_optval, cut_optval, rank(full(sdp_matrix), rank_tolerance)]);
+    [sdp_optval, cut_optval, rank(full(sdp_matrix))]);
 
 if ismember('schatten', methods)
     if ~is_quiet
@@ -160,7 +160,7 @@ if ismember('logdet', methods)
     return_values_map = [return_values_map; containers.Map(...
         {'logdet_optval', 'logdet_cut_optval', 'logdet_rank'}, ...
         [(0.25 * trace(laplacian_matrix * logdet_matrix)), ...
-        logdet_cut_optval, rank(full(logdet_matrix), rank_tolerance)])];
+        logdet_cut_optval, rank(full(logdet_matrix))])];
 end
 
 if ~is_quiet

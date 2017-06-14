@@ -8,16 +8,16 @@ if nargin < 6
     is_rankone_start = false; 
 end
 if nargin < 5
-    methods = {'langevin_vector'};
+    methods = {'logdet'};
 end
 
-num_cut_finder_trials = 100;
+num_cut_finder_trials = 10;
 is_quiet = true;
 is_cvx_quiet = true;
-p = 0.05;
-eps = 0.1;
+p = 0.001;
+eps = 0.001;
 precision = 0.001;
-rank_tolerance = 1e-3;
+rank_tolerance = 1e-6; %1 / graph_size ;
 
 if ~exist(filename, 'file')   
     disp(filename);
@@ -37,7 +37,7 @@ end
 v = ver;
 if any(strcmp('Parallel Computing Toolbox', {v.Name}))
     parfor i = 0:num_trials - 1
-        try
+%         try
             laplacian_matrix = get_laplacian('random', prob, graph_size);
 
             return_values_map = solve_maxcut_all(laplacian_matrix, methods, ...
@@ -47,9 +47,9 @@ if any(strcmp('Parallel Computing Toolbox', {v.Name}))
             dlmwrite(filename, cell2mat(return_values_map.values), ...
                 'delimiter', ',', '-append');
 
-        catch ME
-            disp(ME.message);
-        end
+%         catch ME
+%             disp(ME.message);
+%         end
     end
 else
     buff_size = 100;

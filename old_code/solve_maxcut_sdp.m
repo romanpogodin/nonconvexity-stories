@@ -22,6 +22,7 @@ end
 cvx_end
 
 sdp_matrix = X;
+
 sdp_optval = cvx_optval; 
 [cut, cut_optval] = compute_cut_randomized(laplacian_matrix, sdp_matrix, ...
                                            num_cut_finder_trials);

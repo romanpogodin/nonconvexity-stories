@@ -27,30 +27,41 @@ best_x = x_start;
 best_optval_x = x_start;
 best_rank_x = x_start;
 
-eta = 0.1;
-ksi = 10;
+eta = 0.00001;
+ksi = 10000;
 
-diagonal_index = logical(eye(size(temp_x)));
+diagonal_index = logical(eye(size(temp_x))); % try to remove try-catch
 
 for n = 1:num_iter
     w = triu(randn(size(curr_x)), 1);
     w = w + transpose(w);
     
-    temp_x = curr_x - 2 * eta * compute_schatten_grad(curr_x, p, eps) + ...
+%     disp(curr_x);
+%     disp(sqrt(2 * eta / ksi) * w);
+    
+    temp_x = curr_x + ... - 2 * eta * compute_schatten_grad(curr_x, p, eps) + ...
         sqrt(2 * eta / ksi) * w;
     temp_x(diagonal_index) = 1;
 
-    if norm_schatten(temp_x - curr_x, p, eps) < precision
-        break
-    end
-    
+    disp(sqrt(2 * eta / ksi) * w);
+    disp(min(eig(curr_x)));
+    disp(min(eig(temp_x)));
+%     if norm_schatten(temp_x - curr_x, p, eps) < precision
+%         break
+%     end
+
     [~, is_negative] = cholcov(temp_x);
     optval_temp_x = trace(laplacian_matrix * temp_x) / 4;
     
-    assert(is_negative || (~is_negative && optval_temp_x <= sdp_optval), ...
-        'Temporary optval is bigger than SDP');
+    if is_negative == 0
+       disp('well'); 
+    end
+    
+%     assert(is_negative || (~is_negative && optval_temp_x <= sdp_optval), ...
+%         'Temporary optval is bigger than SDP');
     
     if (~is_negative && cut_optval <= optval_temp_x)
+        disp('hmm');
         curr_x = temp_x;
     
         if (norm_schatten(curr_x) < norm_schatten(best_x))

@@ -142,6 +142,26 @@ if ismember('greedy', methods)
         {'greedy_cut_optval'}, greedy_cut_optval)];
 end
 
+if ismember('logdet', methods)
+    if ~is_quiet
+        disp('Solving Log-det...')
+    end
+    
+    if is_rankone_start
+       x_start = cut * transpose(cut); 
+    else
+       x_start = sdp_matrix;
+    end
+    
+    [logdet_cut, logdet_cut_optval, logdet_matrix] = ...
+        solve_maxcut_logdet(laplacian_matrix, sdp_optval, cut_optval, x_start, ...
+        p, eps, num_iter, precision, num_cut_finder_trials, is_cvx_quiet);
+    
+    return_values_map = [return_values_map; containers.Map(...
+        {'logdet_optval', 'logdet_cut_optval', 'logdet_rank'}, ...
+        [(0.25 * trace(laplacian_matrix * logdet_matrix)), ...
+        logdet_cut_optval, rank(full(logdet_matrix), rank_tolerance)])];
+end
 
 if ~is_quiet
     disp('SDP cut optval:')

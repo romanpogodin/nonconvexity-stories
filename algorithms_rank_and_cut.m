@@ -2,7 +2,7 @@
 
 %% Constant parameters
 eps = 0.01;
-num_trials = 20;
+num_trials = 10;
 num_iter = 100;
 precision = 1e-6;
 write_precision = 6;

@@ -16,7 +16,7 @@ rank_tol_two = 1e-6;
 p = 0.01;
 q = 0.8;
 
-folder = 'rank_cut_results/';
+folder = 'rank_cut_results_sg/';
 mkdir(folder);
 
 %% Choose methods

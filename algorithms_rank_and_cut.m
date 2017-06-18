@@ -2,13 +2,13 @@
 
 %% Constant parameters
 eps = 0.01;
-num_trials = 50;
+num_trials = 20;
 num_iter = 100;
 precision = 1e-6;
 write_precision = 6;
 graph_size = 100;
 prob = 0.5;
-num_cut_finder_trials = 10000;
+num_cut_finder_trials = 1000;
 
 rank_tol_one = 1e-4;
 rank_tol_two = 1e-6; 

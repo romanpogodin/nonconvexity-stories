@@ -1,7 +1,7 @@
 % Runs algorithms convergence. No loops to speed up parfor computations
 
 %% Constant parameters
-eps = 0.01;
+eps = 0.005;
 num_trials = 20;
 num_iter = 1000;
 precision = 1e-6;

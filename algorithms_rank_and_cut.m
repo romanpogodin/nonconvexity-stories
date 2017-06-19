@@ -22,8 +22,8 @@ mkdir(folder);
 %% Choose methods
 do_irls = false;
 do_grad = false;
-do_singval = true;
-do_logdet = false;
+do_singval = false;
+do_logdet = true;
 
 %% Run simulations
 

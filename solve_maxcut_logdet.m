@@ -64,8 +64,9 @@ for n = 1:num_iter
         subject to
             Y >= 0
             diag(Y) == 1
-            4 * cut_optval <= trace(laplacian_matrix * Y) <= 4 * sdp_optval
+            trace(laplacian_matrix * Y) == 4 * sdp_optval
     cvx_end
+    % 4 * cut_optval <= trace(laplacian_matrix * Y) <= 4 * sdp_optval
         
     %% Check solution
     new_optval = log(det(Y + eps * eye_matrix)); 

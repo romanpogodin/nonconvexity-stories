@@ -2,14 +2,14 @@
 
 %% Constant parameters
 eps = 0.005;
-num_trials = 50;
-num_iter = 1000;
+num_trials = 10;
+num_iter = 100;
 precision = 1e-6;
 write_precision = 6;
 graph_size = 50;
 prob = 0.5;
 num_cut_finder_trials = 1000;
-
+    
 rank_tol_one = 1e-4;
 rank_tol_two = 1e-6; 
 
@@ -21,8 +21,8 @@ mkdir(folder);
 
 %% Choose methods
 do_irls = false;
-do_grad = true;
-do_singval = true;
+do_grad = false;
+do_singval = false;
 do_logdet = true;
 
 %% Run simulations

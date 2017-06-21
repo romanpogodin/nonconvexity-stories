@@ -2,11 +2,11 @@
 
 %% Constant parameters
 eps = 0.005;
-num_trials = 3;
+num_trials = 10;
 num_iter = 1000;
 precision = 1e-6;
 write_precision = 6;
-graph_size = 100;
+graph_size = 50;
 prob = 0.5;
 num_cut_finder_trials = 1000;
 
@@ -16,13 +16,13 @@ rank_tol_two = 1e-6;
 p = 0.01;
 q = 0.8;
 
-folder = 'rank_cut_results_sg/';
+folder = 'rank_cut_results_psd/';
 mkdir(folder);
 
 %% Choose methods
 do_irls = false;
-do_grad = false;
-do_singval = false;
+do_grad = true;
+do_singval = true;
 do_logdet = true;
 
 %% Run simulations
@@ -62,66 +62,73 @@ end
 for i = 1:num_trials 
     disp(i);
     %% Run the same matrix for each method
-    laplacian_matrix = get_laplacian('random', prob, graph_size);
-
+    % Laplacian
+    % objective_matrix = get_laplacian('random', prob, graph_size); 
+    
+    objective_matrix = randn(graph_size, graph_size);
+    % PSD
+    objective_matrix = objective_matrix * transpose(objective_matrix);
+    % indef
+    % objective_matrix = objective_matrix + transpose(objective_matrix);
+    
     [sdp_matrix, cut, sdp_optval, cut_optval] = ...
-        solve_maxcut_sdp(laplacian_matrix, 10, true);
+        solve_maxcut_sdp(objective_matrix, 10, true);
     
     results_sdp(i, 1) = rank(sdp_matrix, rank_tol_one);
     results_sdp(i, 2) = rank(sdp_matrix, rank_tol_two);
     [~, ~, results_sdp(i, 3), results_sdp(i, 4)] = ...
-        compute_cut_randomized(laplacian_matrix, ...
+        compute_cut_randomized(objective_matrix, ...
         sdp_matrix, num_cut_finder_trials);
 
     %% IRLS
     if do_irls
         [matrix, ~] = solve_maxcut_irls(...
-            laplacian_matrix, sdp_optval, cut_optval, ...
+            objective_matrix, sdp_optval, cut_optval, ...
             sdp_matrix, p, eps, num_iter, precision, false, true); 
         
         results_irls(i, 1) = rank(matrix, rank_tol_one);
         results_irls(i, 2) = rank(matrix, rank_tol_two);
         [~, ~, results_irls(i, 3), results_irls(i, 4)] = ...
-            compute_cut_randomized(laplacian_matrix, ...
+            compute_cut_randomized(objective_matrix, ...
             matrix, num_cut_finder_trials);
     end
     
     %% Schatten grad
     if do_grad
         [matrix, ~] = solve_maxcut_grad(...
-            laplacian_matrix, sdp_optval, cut_optval, ...
+            objective_matrix, sdp_optval, cut_optval, ...
             sdp_matrix, p, eps, num_iter, precision, false, true);
         
         results_grad(i, 1) = rank(matrix, rank_tol_one);
         results_grad(i, 2) = rank(matrix, rank_tol_two);
         [~, ~, results_grad(i, 3), results_grad(i, 4)] = ...
-            compute_cut_randomized(laplacian_matrix, ...
+            compute_cut_randomized(objective_matrix, ...
             matrix, num_cut_finder_trials);
     end
         
     %% Singular values grad
     if do_singval
         [matrix, ~] = solve_maxcut_singval(...
-            laplacian_matrix, sdp_optval, cut_optval, ...
+            objective_matrix, sdp_optval, cut_optval, ...
             sdp_matrix, q, eps, num_iter, precision, false, true);
         
         results_singval(i, 1) = rank(matrix, rank_tol_one);
         results_singval(i, 2) = rank(matrix, rank_tol_two);
         [~, ~, results_singval(i, 3), results_singval(i, 4)] = ...
-            compute_cut_randomized(laplacian_matrix, ...
+            compute_cut_randomized(objective_matrix, ...
             matrix, num_cut_finder_trials);
     end
         
     %% Log-det
     if do_logdet
         [matrix, ~] = solve_maxcut_logdet(...
-            laplacian_matrix, sdp_optval, cut_optval, ...
+            objective_matrix, sdp_optval, cut_optval, ...
             sdp_matrix, eps, num_iter, precision, false, true);
         
         results_logdet(i, 1) = rank(matrix, rank_tol_one);
         results_logdet(i, 2) = rank(matrix, rank_tol_two);
         [~, ~, results_logdet(i, 3), results_logdet(i, 4)] = ...
-            compute_cut_randomized(laplacian_matrix, ...
+            compute_cut_randomized(objective_matrix, ...
             matrix, num_cut_finder_trials);
     end
     

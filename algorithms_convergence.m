@@ -30,7 +30,7 @@ for i = 1:num_trials
     laplacian_matrix = get_laplacian('random', prob, graph_size);
 
     [sdp_matrix, cut, sdp_optval, cut_optval] = ...
-        solve_maxcut_sdp(laplacian_matrix, 10, true);
+        solve_maxcut_sdp(laplacian_matrix, num_cut_finder_trials, true);
 
     %% IRLS
     if do_irls

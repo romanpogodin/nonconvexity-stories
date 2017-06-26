@@ -1,12 +1,12 @@
 % Runs algorithms convergence. No loops to speed up parfor computattions
 
 %% Constant parameters
-eps = 0.01;
+eps = 0.005;
 num_trials = 50;
-num_iter = 100;
+num_iter = 1000;
 precision = 1e-6;
 write_precision = 6;
-graph_size = 50;
+graph_size = 100;
 prob = 0.5;
 
 folder = 'convergence_results/';

@@ -80,11 +80,11 @@ for i = 1:num_trials
     
     % PSD
     if is_psd
-        objective_matrix = 4 * objective_matrix * transpose(objective_matrix); # *4 to save maxcut code with 1/4
+        objective_matrix = 4 * objective_matrix * transpose(objective_matrix); % *4 to save maxcut code with 1/4
     end
     
     if is_indef
-        objective_matrix =  4 * objective_matrix + transpose(objective_matrix); # *4 to save maxcut code with 1/4
+        objective_matrix =  4 * objective_matrix + transpose(objective_matrix); % *4 to save maxcut code with 1/4
     end
     
     [sdp_matrix, cut, sdp_optval, cut_optval] = ...

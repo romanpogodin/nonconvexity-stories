@@ -3,7 +3,7 @@
 %% Constant parameters
 eps = 0.005;
 num_trials = 50;
-num_iter = 100;
+num_iter = 50;
 precision = 1e-6;
 write_precision = 6;
 graph_size = 50;
@@ -16,13 +16,21 @@ rank_tol_two = 1e-6;
 p = 0.01;
 q = 0.8;
 
-folder = 'rank_cut_results_psd/';
+if is_maxcut
+    folder = 'rank_cut_results_maxcut/';
+elseif is_psd
+    folder = 'rank_cut_results_psd/';
+elseif is_indef
+    folder = 'rank_cut_results_indef/';
+end
+
+
 mkdir(folder);
 
 %% Choose methods
-do_irls = false;
-do_grad = false;
-do_singval = false;
+do_irls = true;
+do_grad = true;
+do_singval = true;
 do_logdet = true;
 
 %% Run simulations
@@ -62,14 +70,22 @@ end
 for i = 1:num_trials 
     disp(i);
     %% Run the same matrix for each method
-    % Laplacian
-    % objective_matrix = get_laplacian('random', prob, graph_size); 
+    if is_maxcut
+        objective_matrix = get_laplacian('random', prob, graph_size);
+    end
     
-    objective_matrix = randn(graph_size, graph_size);
+    if is_psd || is_indef
+        objective_matrix = randn(graph_size, graph_size);
+    end
+    
     % PSD
-    objective_matrix = objective_matrix * transpose(objective_matrix);
-    % indef
-    % objective_matrix = objective_matrix + transpose(objective_matrix);
+    if is_psd
+        objective_matrix = 4 * objective_matrix * transpose(objective_matrix); # *4 to save maxcut code with 1/4
+    end
+    
+    if is_indef
+        objective_matrix =  4 * objective_matrix + transpose(objective_matrix); # *4 to save maxcut code with 1/4
+    end
     
     [sdp_matrix, cut, sdp_optval, cut_optval] = ...
         solve_maxcut_sdp(objective_matrix, num_cut_finder_trials, true);

@@ -6,7 +6,8 @@ num_trials = 50;
 num_iter = 100;
 precision = 1e-6;
 write_precision = 6;
-graph_size = 100;
+graph_size = 50;
+num_cut_finder_trials = 1000;
 prob = 0.5;
 
 folder = 'convergence_results/';

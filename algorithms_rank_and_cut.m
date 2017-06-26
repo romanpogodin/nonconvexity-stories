@@ -2,7 +2,7 @@
 
 %% Constant parameters
 eps = 0.005;
-num_trials = 10;
+num_trials = 50;
 num_iter = 100;
 precision = 1e-6;
 write_precision = 6;
@@ -72,7 +72,7 @@ for i = 1:num_trials
     % objective_matrix = objective_matrix + transpose(objective_matrix);
     
     [sdp_matrix, cut, sdp_optval, cut_optval] = ...
-        solve_maxcut_sdp(objective_matrix, 10, true);
+        solve_maxcut_sdp(objective_matrix, num_cut_finder_trials, true);
     
     results_sdp(i, 1) = rank(sdp_matrix, rank_tol_one);
     results_sdp(i, 2) = rank(sdp_matrix, rank_tol_two);

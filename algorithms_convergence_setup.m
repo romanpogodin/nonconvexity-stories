@@ -27,9 +27,19 @@ q = 0.8;
 algorithms_convergence
 
 do_logdet = false;
+do_irls = false;
 
-disp('Running p=0.1 and q=0.5 (no logdet');
+disp('Running p=0.1 and q=0.5 (no logdet and irls)');
 p = 0.1;
 q = 0.5;
+
+algorithms_convergence
+
+do_irls = true;
+do_grad = false;
+do_singval = false;
+
+disp('Running p=0.1 (irls)');
+p = 0.1;
 
 algorithms_convergence

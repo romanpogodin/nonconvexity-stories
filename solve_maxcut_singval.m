@@ -59,7 +59,7 @@ beta = 0.8;
 for n = 1:num_iter
     % Backtracking line search, Boyd p. 465., direction == -gradient
     grad = 2 * compute_singval_grad(curr_x, q, eps);
-    step = eps / (4 * (1 + eps ^ q));
+    step = 1; % eps / (4 * (1 + eps ^ q));
     while norm_singval(curr_x - step * grad, q, eps, true, diag_index) > ...
             norm_singval(curr_x, q, eps) - alpha * step * norm(grad, 'fro') ^ 2
         step = beta * step;

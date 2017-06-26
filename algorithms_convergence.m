@@ -24,8 +24,8 @@ if do_logdet
     results_logdet = zeros(num_trials, num_iter + 1);  
 end
 
-%% Parallel simulations
-parfor i = 1:num_trials 
+%% (No) parallel simulations
+for i = 1:num_trials 
     %% Run the same matrix for each method
     laplacian_matrix = get_laplacian('random', prob, graph_size);
 

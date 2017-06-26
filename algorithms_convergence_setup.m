@@ -3,7 +3,7 @@
 %% Constant parameters
 eps = 0.005;
 num_trials = 50;
-num_iter = 1000;
+num_iter = 100;
 precision = 1e-6;
 write_precision = 6;
 graph_size = 100;

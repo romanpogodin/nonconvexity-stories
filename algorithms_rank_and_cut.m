@@ -3,7 +3,7 @@
 %% Constant parameters
 eps = 0.005;
 num_trials = 100;
-num_iter = 50;
+num_iter = 100;
 precision = 1e-6;
 write_precision = 6;
 graph_size = 50;
@@ -30,8 +30,8 @@ mkdir(folder);
 %% Choose methods
 do_irls = true;
 do_grad = true;
-do_singval = true;
-do_logdet = true;
+do_singval = false;
+do_logdet = false;
 
 %% Run simulations
 

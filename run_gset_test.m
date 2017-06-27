@@ -25,6 +25,7 @@ results_sdp = zeros(1, 5);
 results_relaxed = zeros(1, 5);  
 
 folder = 'gset_results/';
+mkdir(folder);
 
 %% Solutions
 for n_graph = graph_numbers

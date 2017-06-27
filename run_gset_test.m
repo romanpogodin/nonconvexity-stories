@@ -87,12 +87,14 @@ for n_graph = graph_numbers
         results_sdp, 'precision', write_precision); 
     
     if strcmp(method, 'irls') || strcmp(method, 'grad')
-        method = strcat(method, '_p', int2str(100 * p));
+        method_name = strcat(method, '_p', int2str(100 * p));
     elseif strcmp(method, 'singval')
-        method = strcat(method, '_q', int2str(100 * q));
+        method_name = strcat(method, '_q', int2str(100 * q));
+    else
+        method_name = method;    
     end
     
-    dlmwrite(strcat(folder, method, '_', general_name), ...
+    dlmwrite(strcat(folder, method_name, '_', general_name), ...
         results_relaxed, ...
         'precision', write_precision); 
     

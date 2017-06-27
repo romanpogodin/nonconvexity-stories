@@ -21,10 +21,10 @@ folder = 'gset_results';
 
 %% Solutions
 for n_graph = graph_numbers
-    general_name = strcat('gset', n_graph);
+    general_name = strcat('gset', int2str(n_graph));
     
     %% Downloading
-    disp(strcat('Downloading G', n_graph));
+    disp(strcat('Downloading G', int2str(n_graph)));
     graph_laplacian = read_gset_laplacian(n_graph); 
     
     disp('Solving...');

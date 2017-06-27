@@ -60,7 +60,7 @@ n_backtracking_steps = 10;
 for n = 1:num_iter
     % Backtracking line search, Boyd p. 465., direction == -gradient
     grad = 2 * compute_schatten_grad(curr_x, p, eps);
-    step = 1.0;
+    step = eps; # not 1 to have less projections on the SDP cone
     curr_norm = norm_schatten(curr_x, p, eps) ^ p;
     
     i = 1;

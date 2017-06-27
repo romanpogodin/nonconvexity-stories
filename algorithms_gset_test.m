@@ -3,10 +3,10 @@
 %% Preliminaries
 eps = 0.005;
 q = 0.8;
-num_iter = 100;
+num_iter = 1000;
 precision = 1e-6;
 write_precision = 6;
-num_cut_finder_trials = 1000;
+num_cut_finder_trials = 10000;
     
 rank_tol_one = 1e-4;
 rank_tol_two = 1e-6; 
@@ -17,7 +17,7 @@ colnames = {'rank', 'max_cut', 'cut_mean', 'cut_std'};
 results_sdp = zeros(1, 5);  
 results_singval = zeros(1, 5);  
 
-folder = 'gset_results';
+folder = 'gset_results/';
 
 %% Solutions
 for n_graph = graph_numbers

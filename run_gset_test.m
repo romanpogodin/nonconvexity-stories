@@ -29,6 +29,14 @@ results_relaxed = zeros(1, 5);
 folder = 'gset_results/';
 mkdir(folder);
 
+if strcmp(method, 'irls') || strcmp(method, 'grad')
+    method_name = strcat(method, '_p', int2str(100 * p));
+elseif strcmp(method, 'singval')
+    method_name = strcat(method, '_q', int2str(100 * q));
+else
+    method_name = method;    
+end
+
 %% Solutions
 for n_graph = graph_numbers
     general_name = strcat('gset', int2str(n_graph));
@@ -85,14 +93,6 @@ for n_graph = graph_numbers
     
     dlmwrite(strcat(folder, 'sdp_', general_name), ...
         results_sdp, 'precision', write_precision); 
-    
-    if strcmp(method, 'irls') || strcmp(method, 'grad')
-        method_name = strcat(method, '_p', int2str(100 * p));
-    elseif strcmp(method, 'singval')
-        method_name = strcat(method, '_q', int2str(100 * q));
-    else
-        method_name = method;    
-    end
     
     dlmwrite(strcat(folder, method_name, '_', general_name), ...
         results_relaxed, ...

@@ -61,7 +61,7 @@ for n = 1:num_iter
     % Backtracking line search, Boyd p. 465., direction == -gradient
     grad = 2 * compute_schatten_grad(curr_x, p, eps);
     step = 1.0;
-    curr_norm = norm_schatten(curr_x, p, eps) ^ p
+    curr_norm = norm_schatten(curr_x, p, eps) ^ p;
     
     i = 1;
     while norm_schatten(curr_x - step * grad, p, eps, true, diag_index) ^ p > ...

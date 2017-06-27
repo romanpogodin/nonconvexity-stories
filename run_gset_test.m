@@ -3,7 +3,9 @@ function algorithms_gset_test(graph_numbers, method)
 % from https://web.stanford.edu/%7Eyyye/yyye/Gset/G1
 if nargin < 2
     method = 'singval';
-elseif nargin < 1
+end
+    
+if nargin < 1
     graph_numbers = [1];
 end
     

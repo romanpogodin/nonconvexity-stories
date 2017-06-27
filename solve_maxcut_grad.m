@@ -55,14 +55,22 @@ grad = curr_x;
 %% Gradient descent
 alpha = 0.3;
 beta = 0.8;
+n_backtracking_steps = 10;
 
 for n = 1:num_iter
     % Backtracking line search, Boyd p. 465., direction == -gradient
     grad = 2 * compute_schatten_grad(curr_x, p, eps);
     step = 1.0;
+    curr_norm = norm_schatten(curr_x, p, eps) ^ p
+    
+    i = 1;
     while norm_schatten(curr_x - step * grad, p, eps, true, diag_index) ^ p > ...
-            norm_schatten(curr_x, p, eps) ^ p - alpha * step * norm(grad, 'fro') ^ 2
+            curr_norm - alpha * step * norm(grad, 'fro') ^ 2
         step = beta * step;
+        i = i + 1;
+        if i > n_backtracking_steps
+            break;
+        end
     end
 
     curr_x = curr_x - step * grad;

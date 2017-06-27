@@ -29,6 +29,7 @@ for n_graph = graph_numbers
     
     disp('Solving...');
     %% SDP
+    disp('...SDP');
     [sdp_matrix, cut, sdp_optval, cut_optval] = ...
         solve_maxcut_sdp(graph_laplacian, num_cut_finder_trials, true);
     
@@ -39,8 +40,9 @@ for n_graph = graph_numbers
         sdp_matrix, num_cut_finder_trials);
     
     %% Singular values
+    disp('...singular values');
     [matrix, ~] = solve_maxcut_singval(...
-            objective_matrix, sdp_optval, cut_optval, ...
+            graph_laplacian, sdp_optval, cut_optval, ...
             sdp_matrix, q, eps, num_iter, precision, false, true);
         
     results_singval(1, 1) = rank(matrix, rank_tol_one);

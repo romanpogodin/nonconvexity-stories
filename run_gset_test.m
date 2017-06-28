@@ -3,7 +3,9 @@ function algorithms_gset_test(graph_numbers, method)
 % from https://web.stanford.edu/%7Eyyye/yyye/Gset/G1
 if nargin < 2
     method = 'singval';
-elseif nargin < 1
+end
+    
+if nargin < 1
     graph_numbers = [1];
 end
     
@@ -26,6 +28,14 @@ results_relaxed = zeros(1, 5);
 
 folder = 'gset_results/';
 mkdir(folder);
+
+if strcmp(method, 'irls') || strcmp(method, 'grad')
+    method_name = strcat(method, '_p', int2str(100 * p));
+elseif strcmp(method, 'singval')
+    method_name = strcat(method, '_q', int2str(100 * q));
+else
+    method_name = method;    
+end
 
 %% Solutions
 for n_graph = graph_numbers
@@ -59,12 +69,12 @@ for n_graph = graph_numbers
             graph_laplacian, sdp_optval, cut_optval, ...
             sdp_matrix, eps, num_iter, precision, false, true);
     elseif strcmp(method, 'grad')
-        disp('...singular values');
+        disp('...Schatten grad');
         [matrix, ~] = solve_maxcut_grad(...
             graph_laplacian, sdp_optval, cut_optval, ...
             sdp_matrix, p, eps, num_iter, precision, false, true);
     elseif strcmp(method, 'irls')
-        disp('...singular values');
+        disp('...Schatten IRLS');
         [matrix, ~] = solve_maxcut_irls(...
             graph_laplacian, sdp_optval, cut_optval, ...
             sdp_matrix, p, eps, num_iter, precision, false, true); 
@@ -84,13 +94,7 @@ for n_graph = graph_numbers
     dlmwrite(strcat(folder, 'sdp_', general_name), ...
         results_sdp, 'precision', write_precision); 
     
-    if strcmp(method, 'irls') || strcmp(method, 'grad')
-        method = strcat(method, '_p', int2str(100 * p));
-    elseif strcmp(method, 'singval')
-        method = strcat(method, '_q', int2str(100 * q));
-    end
-    
-    dlmwrite(strcat(folder, method, '_', general_name), ...
+    dlmwrite(strcat(folder, method_name, '_', general_name), ...
         results_relaxed, ...
         'precision', write_precision); 
     

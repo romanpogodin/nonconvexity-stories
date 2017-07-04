@@ -43,7 +43,8 @@ end
 
 %% Solutions
 for n_graph = graph_numbers
-    general_name = strcat('gset', int2str(n_graph));
+    general_name = strcat('gset', int2str(n_graph), 'relaxed_', ...
+        int2str(is_constraint_relaxed));
     
     %% Downloading
     disp(strcat('Downloading G', int2str(n_graph)));

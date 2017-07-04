@@ -1,6 +1,7 @@
 function [curr_x, optvals] = solve_maxcut_logdet(...
     laplacian_matrix, sdp_optval, cut_optval, x_start, ...
-    eps, num_iter, precision, record_optvals, is_cvx_quiet)
+    eps, num_iter, precision, record_optvals, is_cvx_quiet, ...
+    is_constraint_relaxed)
 % SOLVE_MAXCUT_LOGDET Solves maxcut problem, using Log-Det heuristic
 %   [curr_x, optvals] = SOLVE_MAXCUT_LOGDET(laplacian_matrix, sdp_optval,
 %   cut_optval, x_start) to solve with default parameters and user-defined
@@ -12,8 +13,13 @@ function [curr_x, optvals] = solve_maxcut_logdet(...
 %   points to stop
 %   records_optvals -- wheter to record optvals at each iteration
 %   is_cvx_quiet -- whether to suppress CVX output
+%   is_constraint_relaxed -- wheter to use 4W <= Tr(LX) or 4SDP=Tr(LX)
 
 %% Defalt arguments
+if nargin < 10
+    is_constraint_relaxed = true;
+end
+
 if nargin < 9
     is_cvx_quiet = true;
 end
@@ -53,20 +59,35 @@ for n = 1:num_iter
         eps * eye_matrix, -1);
     
     %% CVX
-    if is_cvx_quiet
-        cvx_begin sdp quiet
+    if is_constraint_relaxed
+        if is_cvx_quiet
+            cvx_begin sdp quiet
+        else
+            cvx_begin sdp
+        end
+
+        variable Y(size(curr_x)) symmetric
+            minimize trace(curr_weight * Y)
+            subject to
+                Y >= 0
+                diag(Y) == 1
+                4 * cut_optval <= trace(laplacian_matrix * Y) <= 4 * sdp_optval
+        cvx_end
     else
-        cvx_begin sdp
+        if is_cvx_quiet
+            cvx_begin sdp quiet
+        else
+            cvx_begin sdp
+        end
+
+        variable Y(size(curr_x)) symmetric
+            minimize trace(curr_weight * Y)
+            subject to
+                Y >= 0
+                diag(Y) == 1
+                trace(laplacian_matrix * Y) == 4 * sdp_optval
+        cvx_end
     end
-        
-    variable Y(size(curr_x)) symmetric
-        minimize trace(curr_weight * Y)
-        subject to
-            Y >= 0
-            diag(Y) == 1
-            4 * cut_optval <= trace(laplacian_matrix * Y) <= 4 * sdp_optval
-    cvx_end
-    % trace(laplacian_matrix * Y) == 4 * sdp_optval
         
     %% Check solution
     new_optval = log(det(Y + eps * eye_matrix)); 

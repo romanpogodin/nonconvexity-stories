@@ -1,6 +1,7 @@
 function [curr_x, optvals] = solve_maxcut_grad(...
     laplacian_matrix, sdp_optval, cut_optval, x_start, p, ...
-    eps, num_iter, precision, record_optvals, is_cvx_quiet)
+    eps, num_iter, precision, record_optvals, is_cvx_quiet, ...
+    is_constraint_relaxed)
 % SOLVE_MAXCUT_GRAD Solves maxcut problem, using Schatten norms
 %   [curr_x, optvals] = SOLVE_MAXCUT_GRAD(laplacian_matrix, sdp_optval,
 %   cut_optval, x_start) to solve with default parameters and user-defined
@@ -12,8 +13,13 @@ function [curr_x, optvals] = solve_maxcut_grad(...
 %   precision -- minimum Frobenius norm of gradient to stop
 %   records_optvals -- wheter to record optvals at each iteration
 %   is_cvx_quiet -- whether to suppress CVX output
+%   is_constraint_relaxed -- wheter to use 4W <= Tr(LX) or 4SDP=Tr(LX)
 
 %% Defalt arguments
+if nargin < 11
+    is_constraint_relaxed = true;
+end
+
 if nargin < 10
     is_cvx_quiet = true;
 end
@@ -76,22 +82,12 @@ for n = 1:num_iter
     curr_x = curr_x - step * grad;
     curr_x(diag_index) = 1;
     
-    if min(eig(curr_x)) < 0 || 4 * cut_optval > trace(laplacian_matrix * curr_x)
+    if (is_constraint_relaxed && (min(eig(curr_x)) < 0 || ...
+            4 * cut_optval > trace(laplacian_matrix * curr_x))) || ...
+            ~is_constraint_relaxed
         %% Projection
-        if is_cvx_quiet
-            cvx_begin sdp quiet
-        else
-            cvx_begin sdp
-        end
-
-        variable Y(size(curr_x)) symmetric
-            minimize norm(Y - curr_x, 'fro')
-            subject to
-                Y >= 0
-                diag(Y) == 1
-                4 * cut_optval <= trace(laplacian_matrix * Y) <= 4 * sdp_optval
-        cvx_end
-        curr_x = Y;
+        curr_x = project_on_maxcut(curr_x, laplacian_matrix, ...
+            cut_optval, sdp_optval, is_cvx_quiet, is_constraint_relaxed);
     end
 
     new_optval = norm_schatten(curr_x, p, eps) ^ p; 

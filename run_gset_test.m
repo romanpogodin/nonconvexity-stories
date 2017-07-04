@@ -1,6 +1,10 @@
-function algorithms_gset_test(graph_numbers, method)
+function run_gset_test(graph_numbers, method, is_constraint_relaxed)
 % A script to test algorithms on Gset graphs 
 % from https://web.stanford.edu/%7Eyyye/yyye/Gset/G1
+if nargin < 3
+    is_constraint_relaxed = true;
+end
+
 if nargin < 2
     method = 'singval';
 end
@@ -18,7 +22,7 @@ num_iter = 100;
 precision = 1e-6;
 write_precision = 6;
 num_cut_finder_trials = 10000;
-    
+
 rank_tol_one = 1e-4;
 rank_tol_two = 1e-6; 
 
@@ -62,7 +66,8 @@ for n_graph = graph_numbers
         disp('...singular values');
         [matrix, ~] = solve_maxcut_singval(...
             graph_laplacian, sdp_optval, cut_optval, ...
-            sdp_matrix, q, eps, num_iter, precision, false, true);
+            sdp_matrix, q, eps, num_iter, precision, false, true, ...
+            is_constraint_relaxed);
     elseif strcmp(method, 'singval_maxrank')
         disp('...singular values (max rank)');
         [matrix, ~] = solve_maxcut_singval_maxrank(...
@@ -72,17 +77,20 @@ for n_graph = graph_numbers
         disp('...logdet');
         [matrix, ~] = solve_maxcut_logdet(...
             graph_laplacian, sdp_optval, cut_optval, ...
-            sdp_matrix, eps, num_iter, precision, false, true);
+            sdp_matrix, eps, num_iter, precision, false, true, ...
+            is_constraint_relaxed);
     elseif strcmp(method, 'grad')
         disp('...Schatten grad');
         [matrix, ~] = solve_maxcut_grad(...
             graph_laplacian, sdp_optval, cut_optval, ...
-            sdp_matrix, p, eps, num_iter, precision, false, true);
+            sdp_matrix, p, eps, num_iter, precision, false, true, ...
+            is_constraint_relaxed);
     elseif strcmp(method, 'irls')
         disp('...Schatten IRLS');
         [matrix, ~] = solve_maxcut_irls(...
             graph_laplacian, sdp_optval, cut_optval, ...
-            sdp_matrix, p, eps, num_iter, precision, false, true); 
+            sdp_matrix, p, eps, num_iter, precision, false, true, ...
+            is_constraint_relaxed); 
     end
         
     

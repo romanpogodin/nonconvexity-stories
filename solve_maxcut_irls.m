@@ -1,6 +1,7 @@
 function [curr_x, optvals] = solve_maxcut_irls(...
     laplacian_matrix, sdp_optval, cut_optval, x_start, p, ...
-    eps, num_iter, precision, record_optvals, is_cvx_quiet)
+    eps, num_iter, precision, record_optvals, is_cvx_quiet, ...
+    is_constraint_relaxed)
 % SOLVE_MAXCUT_IRLS Solves maxcut problem, using IRLS for Schatten norms
 %   [curr_x, optvals] = SOLVE_MAXCUT_IRLS(laplacian_matrix, sdp_optval,
 %   cut_optval, x_start) to solve with default parameters and user-defined
@@ -13,8 +14,13 @@ function [curr_x, optvals] = solve_maxcut_irls(...
 %   points to stop
 %   records_optvals -- wheter to record optvals at each iteration
 %   is_cvx_quiet -- whether to suppress CVX output
+%   is_constraint_relaxed -- wheter to use 4W <= Tr(LX) or 4SDP=Tr(LX)
 
 %% Default arguments
+if nargin < 11
+    is_constraint_relaxed = true;
+end
+
 if nargin < 10
     is_cvx_quiet = true;
 end
@@ -59,20 +65,36 @@ for n = 1:num_iter
         (p - 2.0) / 2.0), 'lower');
     
     %% CVX
-    if is_cvx_quiet
-        cvx_begin sdp quiet
+    if is_constraint_relaxed
+        if is_cvx_quiet
+            cvx_begin sdp quiet
+        else
+            cvx_begin sdp
+        end
+
+        variable Y(size(curr_x)) symmetric
+            minimize norm(Y * curr_weight_chol, 'fro')
+            subject to
+                Y >= 0
+                diag(Y) == 1
+                4 * cut_optval <= trace(laplacian_matrix * Y) <= 4 * sdp_optval
+        cvx_end
     else
-        cvx_begin sdp
+        if is_cvx_quiet
+            cvx_begin sdp quiet
+        else
+            cvx_begin sdp
+        end
+
+        variable Y(size(curr_x)) symmetric
+            minimize norm(Y * curr_weight_chol, 'fro')
+            subject to
+                Y >= 0
+                diag(Y) == 1
+                trace(laplacian_matrix * Y) == 4 * sdp_optval
+        cvx_end
     end
         
-    variable Y(size(curr_x)) symmetric
-        minimize norm(Y * curr_weight_chol, 'fro')
-        subject to
-            Y >= 0
-            diag(Y) == 1
-            4 * cut_optval <= trace(laplacian_matrix * Y) <= 4 * sdp_optval
-    cvx_end
-    
     %% Check solution
     new_optval = norm_schatten(Y, p, eps) ^ p; 
     if record_optvals

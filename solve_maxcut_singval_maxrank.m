@@ -58,6 +58,7 @@ beta = 0.8;
 n_backtracking_steps = 10;
 
 for n = 1:num_iter
+    disp(n);
     % Backtracking line search, Boyd p. 465., direction == -gradient
     grad = 2 * compute_singval_grad(curr_x, q, eps);
     step = eps / (4 * (1 + eps ^ q));

@@ -63,6 +63,11 @@ for n_graph = graph_numbers
         [matrix, ~] = solve_maxcut_singval(...
             graph_laplacian, sdp_optval, cut_optval, ...
             sdp_matrix, q, eps, num_iter, precision, false, true);
+    elseif strcmp(method, 'singval_maxrank')
+        disp('...singular values (max rank)');
+        [matrix, ~] = solve_maxcut_singval_maxrank(...
+            graph_laplacian, sdp_optval, cut_optval, ...
+            sdp_matrix, q, eps, num_iter, precision, false, true);
     elseif strcmp(method, 'logdet')
         disp('...logdet');
         [matrix, ~] = solve_maxcut_logdet(...
@@ -80,6 +85,7 @@ for n_graph = graph_numbers
             sdp_matrix, p, eps, num_iter, precision, false, true); 
     end
         
+    
     results_relaxed(1, 1) = rank(matrix, rank_tol_one);
     results_relaxed(1, 2) = rank(matrix, rank_tol_two);
     [~, results_relaxed(1, 3), results_relaxed(1, 4), results_relaxed(1, 5)] = ...

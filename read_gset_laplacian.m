@@ -17,6 +17,6 @@ graph_laplacian = sparse(table2array(data(2:end, 1)), ...
 graph_laplacian = graph_laplacian + graph_laplacian.' - ...
     diag(diag(graph_laplacian));
 
-graph_laplacian = full(diag(sum(graph_laplacian)) - graph_laplacian);
+graph_laplacian = diag(sum(graph_laplacian)) - graph_laplacian;
 end
 

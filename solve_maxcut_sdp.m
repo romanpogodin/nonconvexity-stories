@@ -16,6 +16,10 @@ function [sdp_matrix, cut, sdp_optval, cut_optval] = ...
 %   programming. 
 %   To install it, download SDPLR from http://sburer.github.io/projects.html
 %   Documentation: http://sburer.github.io/files/SDPLR-1.03-beta-usrguide.pdf
+%
+%   On 64x platforms, sparse matrices might not work. To enable this, add 
+%   '-largeArrayDims ' to the mexcmd variable in mexinstall.m, and
+%   reinstall SDPLR
 
 %% Defalt arguments
 if nargin < 4
@@ -23,7 +27,7 @@ if nargin < 4
 end
 
 if nargin < 3
-    is_cvx_quiet = true;
+    is_quiet = true;
 end
 
 if nargin < 2
@@ -51,21 +55,30 @@ elseif strcmp('sdplr', solver)
     %% SDPLR
     problem_size = size(laplacian_matrix, 1);
     
-    A = zeros(problem_size, problem_size ^ 2);
+
+%     A = zeros(problem_size, problem_size ^ 2);
+%     for i=1:problem_size
+%        A(i, i + (i - 1) * problem_size) = 1; 
+%     end
+    
+    first_index = 1:problem_size;
+    second_index = zeros(problem_size, 1);
+    unit_values = ones(problem_size, 1);
     for i=1:problem_size
-       A(i, i + (i - 1) * problem_size) = 1; 
+       second_index(i) = i + (i - 1) * problem_size;
     end
+    A = sparse(first_index, second_index, unit_values, ...
+        problem_size, problem_size ^ 2);
     
     K = struct('s', problem_size);
     b = ones(problem_size, 1);
     c = reshape(laplacian_matrix, problem_size ^ 2, 1);
     
-    disp('solving');
     if is_quiet
         pars = struct('printlevel', 0);
         sdp_matrix = sdplr(A, b, -c, K, pars);  % returns a vector
     else
-        sdp_matrix = sdplr(A, b, -c, K);  % returns a vector
+        sdp_matrix = sdplr(full(A), b, -c, K);  % returns a vector
     end
         
     sdp_optval = 0.25 * transpose(c) * sdp_matrix;

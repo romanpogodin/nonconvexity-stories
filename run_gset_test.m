@@ -74,6 +74,8 @@ for n_graph = graph_numbers
         sdp_matrix, num_cut_finder_trials);
     
     %% Relaxation
+    graph_laplacian = full(graph_laplacian);
+    
     if strcmp(method, 'singval')
         disp('...singular values');
         [matrix, ~] = solve_maxcut_singval(...

@@ -1,6 +1,17 @@
-function run_gset_test(graph_numbers, method, is_constraint_relaxed)
-% A script to test algorithms on Gset graphs 
-% from https://web.stanford.edu/%7Eyyye/yyye/Gset/G1
+function run_gset_test(graph_numbers, method, is_constraint_relaxed, solver)
+%   RUN_GSET_TEST A script to test algorithms on Gset graphs 
+%   from https://web.stanford.edu/%7Eyyye/yyye/Gset/
+%   RUN_GSET_TEST(graph_numbers) -- downloads Gset graphs, which numbers
+%   specified by a vector graph_number
+%   method -- method to improve an SDP solution: singval, irls, grad,
+%   logdet
+%   is_constraint_relaxed -- wheter to use 4W <= Tr(LX) or 4SDP=Tr(LX)
+%   solver -- which solver to use for SDP solution: cvx or sdplr
+
+if nargin < 4
+    solver = 'cvx';
+end
+
 if nargin < 3
     is_constraint_relaxed = true;
 end
@@ -26,7 +37,7 @@ num_cut_finder_trials = 10000;
 rank_tol_one = 1e-4;
 rank_tol_two = 1e-6; 
 
-colnames = {'rank', 'max_cut', 'cut_mean', 'cut_std'};
+% colnames = {'rank', 'max_cut', 'cut_mean', 'cut_std'};
 results_sdp = zeros(1, 5);  
 results_relaxed = zeros(1, 5);  
 
@@ -53,8 +64,8 @@ for n_graph = graph_numbers
     disp('Solving...');
     %% SDP
     disp('...SDP');
-    [sdp_matrix, cut, sdp_optval, cut_optval] = ...
-        solve_maxcut_sdp(graph_laplacian, num_cut_finder_trials, true);
+    [sdp_matrix, ~, sdp_optval, cut_optval] = ...
+        solve_maxcut_sdp(graph_laplacian, num_cut_finder_trials, true, solver);
     
     results_sdp(1, 1) = rank(sdp_matrix, rank_tol_one);
     results_sdp(1, 2) = rank(sdp_matrix, rank_tol_two);

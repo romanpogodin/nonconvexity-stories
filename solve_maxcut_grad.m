@@ -92,7 +92,9 @@ for n = 1:num_iter
     
     if is_constraint_relaxed && ...
             4 * cut_optval > trace(laplacian_matrix * curr_x)
-        disp('Reached value is smaller, than lower bound');
+        disp('Reached value is smaller than lower bound, returning previous point');
+        curr_x = curr_x + step * grad;
+        curr_x(diag_index) = 1;
         break;
     end
     

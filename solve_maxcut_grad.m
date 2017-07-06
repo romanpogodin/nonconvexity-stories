@@ -10,7 +10,8 @@ function [curr_x, optvals] = solve_maxcut_grad(...
 %   p -- Schatten norm parameter
 %   eps -- smoothing parameter
 %   num_iter -- maximum number of gradient descent iterations
-%   precision -- minimum Frobenius norm of gradient to stop
+%   precision -- minimum Frobenius norm of gradient to stop, also used to
+%   threshold minimum singular value (must be >= -precision)
 %   records_optvals -- wheter to record optvals at each iteration
 %   is_cvx_quiet -- whether to suppress CVX output
 %   is_constraint_relaxed -- wheter to use 4W <= Tr(LX) or 4SDP=Tr(LX)
@@ -88,9 +89,10 @@ for n = 1:num_iter
         break;
     end
     
-    if (is_constraint_relaxed && min(eig(curr_x)) < 0) || ...
+    if (is_constraint_relaxed && min(eig(curr_x)) < -precision) || ...
             ~is_constraint_relaxed
         %% Projection
+        disp(strcat('step ', int2str(n), ', projecting...'));
         curr_x = project_on_maxcut(curr_x, laplacian_matrix, ...
             cut_optval, sdp_optval, is_cvx_quiet, is_constraint_relaxed);
     end

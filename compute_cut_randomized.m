@@ -2,7 +2,7 @@ function [cut, cut_value, cut_mean, cut_std] = compute_cut_randomized(...
     laplacian_matrix, matrix, num_trials, tolerance)
 %% Default arguments
 if nargin < 4
-    tolerance = 1e-8;
+    tolerance = 1e-5;
 end
                                                
 if nargin < 3

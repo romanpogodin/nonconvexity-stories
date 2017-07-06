@@ -107,7 +107,7 @@ for n_graph = graph_numbers
     results_relaxed(1, 2) = rank(matrix, rank_tol_two);
     [~, results_relaxed(1, 3), results_relaxed(1, 4), results_relaxed(1, 5)] = ...
         compute_cut_randomized(graph_laplacian, ...
-        matrix, num_cut_finder_trials);
+        matrix, num_cut_finder_trials, precision);
     
     disp('...done');
     

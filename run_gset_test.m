@@ -30,8 +30,8 @@ eps = 0.005;
 q = 0.8;
 p = 0.01;
 num_iter = 100;
-precision = 1e-6;
-write_precision = 6;
+precision = 1e-5;
+write_precision = 5;
 num_cut_finder_trials = 10000;
 
 rank_tol_one = 1e-4;

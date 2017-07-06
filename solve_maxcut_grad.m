@@ -104,9 +104,9 @@ for n = 1:num_iter
             cut_optval, sdp_optval, is_cvx_quiet, is_constraint_relaxed);
     end
 
-    new_optval = norm_schatten(curr_x, p, eps) ^ p; 
     if record_optvals
-       optvals(n + 1) = new_optval; 
+        new_optval = norm_schatten(curr_x, p, eps) ^ p; 
+        optvals(n + 1) = new_optval; 
     end
     
     if norm(grad, 'fro') < precision

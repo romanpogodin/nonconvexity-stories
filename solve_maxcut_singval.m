@@ -104,9 +104,9 @@ for n = 1:num_iter
             cut_optval, sdp_optval, is_cvx_quiet, is_constraint_relaxed);
     end
 
-    new_optval = norm_singval(curr_x, q, eps); 
     if record_optvals
-       optvals(n + 1) = new_optval; 
+        new_optval = norm_singval(curr_x, q, eps); 
+        optvals(n + 1) = new_optval; 
     end
     
     if norm(grad, 'fro') < precision

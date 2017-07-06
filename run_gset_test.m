@@ -33,6 +33,8 @@ num_iter = 100;
 precision = 1e-5;
 write_precision = 5;
 num_cut_finder_trials = 10000;
+% enabled only for singval, might break everything for Schatten
+check_psd = false;  
 
 rank_tol_one = 1e-4;
 rank_tol_two = 1e-6; 
@@ -55,7 +57,7 @@ end
 %% Solutions
 for n_graph = graph_numbers
     general_name = strcat('gset', int2str(n_graph), 'relaxed_', ...
-        int2str(is_constraint_relaxed));
+        int2str(is_constraint_relaxed), '_', solver);
     
     %% Downloading
     disp(strcat('Downloading G', int2str(n_graph)));
@@ -81,7 +83,7 @@ for n_graph = graph_numbers
         [matrix, ~] = solve_maxcut_singval(...
             graph_laplacian, sdp_optval, cut_optval, ...
             sdp_matrix, q, eps, num_iter, precision, false, true, ...
-            is_constraint_relaxed);
+            is_constraint_relaxed, check_psd);
     elseif strcmp(method, 'logdet')
         disp('...logdet');
         [matrix, ~] = solve_maxcut_logdet(...

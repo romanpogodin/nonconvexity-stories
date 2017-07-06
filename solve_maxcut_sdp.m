@@ -55,12 +55,6 @@ elseif strcmp('sdplr', solver)
     %% SDPLR
     problem_size = size(laplacian_matrix, 1);
     
-
-%     A = zeros(problem_size, problem_size ^ 2);
-%     for i=1:problem_size
-%        A(i, i + (i - 1) * problem_size) = 1; 
-%     end
-    
     first_index = 1:problem_size;
     second_index = zeros(problem_size, 1);
     unit_values = ones(problem_size, 1);

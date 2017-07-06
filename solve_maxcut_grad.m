@@ -1,7 +1,7 @@
 function [curr_x, optvals] = solve_maxcut_grad(...
     laplacian_matrix, sdp_optval, cut_optval, x_start, p, ...
     eps, num_iter, precision, record_optvals, is_cvx_quiet, ...
-    is_constraint_relaxed)
+    is_constraint_relaxed, check_psd)
 % SOLVE_MAXCUT_GRAD Solves maxcut problem, using Schatten norms
 %   [curr_x, optvals] = SOLVE_MAXCUT_GRAD(laplacian_matrix, sdp_optval,
 %   cut_optval, x_start) to solve with default parameters and user-defined
@@ -15,8 +15,15 @@ function [curr_x, optvals] = solve_maxcut_grad(...
 %   records_optvals -- wheter to record optvals at each iteration
 %   is_cvx_quiet -- whether to suppress CVX output
 %   is_constraint_relaxed -- wheter to use 4W <= Tr(LX) or 4SDP=Tr(LX)
+%   check_psd -- whether to check PSD constraint or not. Small step
+%   implies, that this operation is not needed. Setting to false must speed
+%   up computations
 
 %% Defalt arguments
+if nargin < 12
+    check_psd = true;
+end
+
 if nargin < 11
     is_constraint_relaxed = true;
 end
@@ -89,7 +96,7 @@ for n = 1:num_iter
         break;
     end
     
-    if (is_constraint_relaxed && min(eig(curr_x)) < -precision) || ...
+    if (check_psd && min(eig(curr_x)) < -precision) || ...
             ~is_constraint_relaxed
         %% Projection
         disp(strcat('step ', int2str(n), ', projecting...'));

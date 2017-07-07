@@ -100,10 +100,17 @@ for n = 1:num_iter
     
     if (check_psd && min(eig(curr_x)) < -precision) || ...
             ~is_constraint_relaxed
-        %% Projection
-        disp(strcat('step ', int2str(n), ', projecting...'));
-        curr_x = project_on_maxcut(curr_x, laplacian_matrix, ...
-            cut_optval, sdp_optval, is_cvx_quiet, is_constraint_relaxed);
+%         %% Projection
+%         disp(strcat('step ', int2str(n), ', projecting...'));
+%         curr_x = project_on_maxcut(curr_x, laplacian_matrix, ...
+%             cut_optval, sdp_optval, is_cvx_quiet, is_constraint_relaxed);
+        %% Reducing step to keep psd, might be very expensive
+        disp('New point is not PSD, reducing step...');
+        while min(eig(curr_x)) < -precision
+            step = beta * step;
+            curr_x = curr_x + (step - step / beta) * grad;
+            curr_x(diag_index) = 1;
+        end
     end
 
     if record_optvals

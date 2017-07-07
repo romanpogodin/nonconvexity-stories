@@ -106,10 +106,17 @@ for n = 1:num_iter
 %             cut_optval, sdp_optval, is_cvx_quiet, is_constraint_relaxed);
         %% Reducing step to keep psd, might be very expensive
         disp('New point is not PSD, reducing step...');
+        
+        init_point = curr_x + step * grad;
+        
         while min(eig(curr_x)) < -precision
-            step = beta * step;
-            curr_x = curr_x + (step - step / beta) * grad;
+            step = beta * step;            
+            curr_x = curr_x - (step - step / beta) * grad;
             curr_x(diag_index) = 1;
+        end
+        
+        if step < precision % next step will be noisy
+            break;
         end
     end
 

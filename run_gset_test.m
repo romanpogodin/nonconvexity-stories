@@ -82,7 +82,7 @@ for n_graph = graph_numbers
         
         %% Writing results
         disp('...writing results...');
-        method_name = strcat(method, '_q', int2str(100 * q));
+        method_name = strcat('singval_q', int2str(100 * q));
         
         results_relaxed(1, 1) = rank(matrix, rank_tol_one);
         results_relaxed(1, 2) = rank(matrix, rank_tol_two);
@@ -108,7 +108,7 @@ for n_graph = graph_numbers
             
             %% Writing results
             disp('...writing results...');
-            method_name = strcat(method, '_p', int2str(100 * p));
+            method_name = strcat('schatten_p', int2str(100 * p));
 
             results_relaxed(1, 1) = rank(matrix, rank_tol_one);
             results_relaxed(1, 2) = rank(matrix, rank_tol_two);

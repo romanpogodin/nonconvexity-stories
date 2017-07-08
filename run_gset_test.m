@@ -31,7 +31,7 @@ p_param = [0.01, 0.1];
 num_iter = 100;
 precision = 1e-5;
 write_precision = 5;
-num_cut_finder_trials = 10000;
+num_cut_finder_trials = 100000;
 % enabled only for singval, might break everything for Schatten
 check_psd = false;  
 

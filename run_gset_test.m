@@ -56,7 +56,7 @@ for n_graph = graph_numbers
     
     disp('Solving...');
     %% SDP
-    disp('...SDP');
+    disp('...SDP...');
     [sdp_matrix, ~, sdp_optval, cut_optval] = ...
         solve_maxcut_sdp(graph_laplacian, num_cut_finder_trials, true, solver);
     
@@ -66,21 +66,22 @@ for n_graph = graph_numbers
         compute_cut_randomized(graph_laplacian, ...
         sdp_matrix, num_cut_finder_trials);
     
-    disp('Writing results...');
+    disp('...writing results...');
     dlmwrite(strcat(folder, 'sdp_', general_name), ...
         results_sdp, 'precision', write_precision); 
+    disp('...done');
     
     %% Relaxation    
     if strcmp(method, 'singval') || strcmp(method, 'all')
         %% Solving
-        disp('...singular values');
+        disp('...singular values...');
         [matrix, ~] = solve_maxcut_singval(...
             graph_laplacian, sdp_optval, cut_optval, ...
             sdp_matrix, q, eps, num_iter, precision, false, true, ...
             is_constraint_relaxed, check_psd);
         
         %% Writing results
-        disp('Writing results...');
+        disp('...writing results...');
         method_name = strcat(method, '_q', int2str(100 * q));
         
         results_relaxed(1, 1) = rank(matrix, rank_tol_one);
@@ -99,14 +100,14 @@ for n_graph = graph_numbers
     if strcmp(method, 'grad') || strcmp(method, 'all')
         for p = p_param
             %% Solving
-            disp(strcat('...Schatten grad for p', int2str(100 * p)));
+            disp(strcat('...Schatten grad for p', int2str(100 * p), '...'));
             [matrix, ~] = solve_maxcut_grad(...
                 graph_laplacian, sdp_optval, cut_optval, ...
                 sdp_matrix, p, eps, num_iter, precision, false, true, ...
                 is_constraint_relaxed);
             
             %% Writing results
-            disp('Writing results...');
+            disp('...writing results...');
             method_name = strcat(method, '_p', int2str(100 * p));
 
             results_relaxed(1, 1) = rank(matrix, rank_tol_one);

@@ -109,13 +109,16 @@ for n = 1:num_iter
         
         init_point = curr_x + step * grad;
         
-        while min(eig(curr_x)) < -precision
+        step_iter = 1;
+        while min(eig(curr_x)) < -precision && step_iter < n_backtracking_steps
             step = beta * step;            
             curr_x = curr_x - (step - step / beta) * grad;
             curr_x(diag_index) = 1;
         end
         
-        if step < precision % next step will be noisy
+        if step < precision || step_iter < n_backtracking_steps  % next step will be noisy
+            curr_x = curr_x + step * grad;
+            curr_x(diag_index) = 1;
             break;
         end
     end

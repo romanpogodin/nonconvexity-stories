@@ -5,7 +5,8 @@ function run_bigmac_test(problem_size, problem_numbers, method, solver)
 %   a maxcut +-1 problem and solves
 %   http://biqmac.uni-klu.ac.at/library/biq/beasley/bqp#1-#2.sparse, where #1 =
 %   problems_size, #2 = problem_number
-%   method -- method to improve an SDP solution: singval, grad, all (which is singval + grad)
+%   method -- method to improve an SDP solution: 
+%   singval, grad, logdet, all, nologdet (which is singval + grad)
 %   solver -- which solver to use for SDP solution: cvx or sdplr
 
 if nargin < 4
@@ -78,7 +79,7 @@ for n_graph = problem_numbers
     disp('...done');
     
     %% Relaxation    
-    if strcmp(method, 'singval') || strcmp(method, 'all')
+    if strcmp(method, 'singval') || strcmp(method, 'all') || strcmp(method, 'nologdet')
         %% Solving
         disp('...singular values...');
         [matrix, ~] = solve_maxcut_singval(...
@@ -103,7 +104,7 @@ for n_graph = problem_numbers
         disp('...done');
     end
     
-    if strcmp(method, 'grad') || strcmp(method, 'all')
+    if strcmp(method, 'grad') || strcmp(method, 'all') || strcmp(method, 'nologdet')
         for p = p_param
             %% Solving
             disp(strcat('...Schatten grad for p', int2str(100 * p), '...'));
@@ -128,5 +129,27 @@ for n_graph = problem_numbers
         end
     end
     
+    if strcmp(method, 'logdet') || strcmp(method, 'all')
+        %% Solving
+        disp('...logdet...');
+        [matrix, ~] = solve_maxcut_logdet(...
+            graph_laplacian, sdp_optval, cut_optval, ...
+            sdp_matrix, eps, num_iter, precision, false, true, true);
+
+        %% Writing results
+        disp('...writing results...');
+        method_name = 'logdet';
+
+        results_relaxed(1, 1) = rank(matrix, rank_tol_one);
+        results_relaxed(1, 2) = rank(matrix, rank_tol_two);
+
+        [~, results_relaxed(1, 3), results_relaxed(1, 4), results_relaxed(1, 5)] = ...
+            compute_cut_randomized(graph_laplacian, ...
+            matrix, num_cut_finder_trials, precision);
+
+        dlmwrite(strcat(folder, method_name, '_', general_name), ...
+            results_relaxed, 'precision', write_precision); 
+        disp('...done');
+    end   
 end
 end

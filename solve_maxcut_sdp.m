@@ -72,7 +72,6 @@ elseif strcmp('sdplr', solver)
         pars = struct('printlevel', 0);
         sdp_matrix = sdplr(A, b, -c, K, pars);  % returns a vector
     else
-        disp('wut');
         sdp_matrix = sdplr(A, b, -c, K);  % returns a vector
     end
         

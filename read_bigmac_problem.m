@@ -9,7 +9,8 @@ url = strcat('http://biqmac.uni-klu.ac.at/library/biq/beasley/bqp', ...
     int2str(problem_size), '-', int2str(problem_number), '.sparse');
 options = weboptions('ContentType', 'text'); % does not work with table type
 data = webread(url, options);
-data = strsplit(data, {' ', '\n'});
+
+data = strsplit(data); 
 data = cellfun(@str2num, data(1:length(data) - 1));
 
 data = data(3:end);

@@ -11,7 +11,12 @@ options = weboptions('ContentType', 'text'); % does not work with table type
 data = webread(url, options);
 
 data = strsplit(data); 
-data = cellfun(@str2num, data(1:length(data) - 1));
+
+if strcmp(cell2mat(data(1)), '')
+    data = cellfun(@str2num, data(2:length(data) - 1));
+else
+    data = cellfun(@str2num, data(1:length(data) - 1));
+end
 
 data = data(3:end);
 data = transpose(reshape(data, 3, length(data) / 3));

@@ -72,7 +72,7 @@ elseif strcmp('sdplr', solver)
         pars = struct('printlevel', 0);
         sdp_matrix = sdplr(A, b, -c, K, pars);  % returns a vector
     else
-        sdp_matrix = sdplr(full(A), b, -c, K);  % returns a vector
+        sdp_matrix = sdplr(A, b, -c, K);  % returns a vector
     end
         
     sdp_optval = 0.25 * transpose(c) * sdp_matrix;

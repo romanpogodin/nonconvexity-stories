@@ -9,4 +9,4 @@ Research project of the [Yury Maximov's group](http://faculty.skoltech.ru/people
 1. `solve_*` -- solvers for different approaches
 2. Other functions are used in the solvers
 ## Bachelor thesis results
-Roman Pogodin's data and a Jupyter notebook with some scripts for plotting. Contains maxcut and psd testы, and also a test of first 21 Gset problems (from https://web.stanford.edu/%7Eyyye/yyye/Gset/)
+Roman Pogodin's data and a Jupyter notebook with some scripts for plotting. Contains maxcut and psd tests, and also a test of first 21 Gset problems (from https://web.stanford.edu/%7Eyyye/yyye/Gset/)
